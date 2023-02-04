@@ -7,8 +7,8 @@ class LoginSession:
         # email = input("Email: ")
         # password = input("Password: ")
         return {
-            'email': "may1themovie@aol.com",
-            'password': "Jmr27z92-r"
+            'email': "[type email here]",
+            'password': "[type password here]"
         }
 
     def login(self, headers):

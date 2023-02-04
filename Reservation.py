@@ -13,28 +13,28 @@ class Reservation:
 	def get_best_table(self, time, headers):
 		params = (
 			('x-resy-auth-token', self.resyParams.AUTH_TOKEN),
-			('day', self.resyParams.RESERVATION_DATE),
+			('day', self.resyParams.reservation_date),
 			('lat', '0'),
 			('long', '0'),
 			('party_size', self.resyParams.PARTY_SIZE),
-			('venue_id', self.resyParams.VENUE_ID)
+			('venue_id', self.resyParams.venue_id)
 		)
 		response = requests.get('https://api.resy.com/4/find', headers=headers, params=params)
 		venues = response.json()['results']['venues']
 		if not venues:
-			print("Sorry, no reservations have been released for " + self.resyParams.RESERVATION_DATE)
+			print("Sorry, no reservations have been released for " + self.resyParams.reservation_date)
 			return
 
 		available_tables = venues[0]['slots']
 
 		if len(available_tables) == 0:
-			print("Sorry, no available tables on " + self.resyParams.RESERVATION_DATE)
+			print("Sorry, no available tables on " + self.resyParams.reservation_date)
 			return 
 
 		# get table closest to TIME 
 		best_table = available_tables[0]
 		for table in available_tables:
-			best_table = compare_tables(best_table, table)
+			best_table = self.compare_tables(best_table, table)
 		return best_table 
 			
 	# compares two tables and returns table with better reservation time (better = closer to TIME) 
@@ -58,7 +58,8 @@ class Reservation:
 			params = (
 				('x-resy-auth-token', self.resyParams.AUTH_TOKEN),
 				('config_id', str(best_table['config']['token'])),
-				('day', self.resyParams.RESERVATION_DATE),
+				('day', self.resyParams.reservation_date
+				),
 				('party_size', self.resyParams.PARTY_SIZE)
 			)
 			request = requests.get('https://api.resy.com/3/details', headers=headers, params=params)
@@ -71,3 +72,4 @@ class Reservation:
 				'source_id': 'resy.com-venue-details'
 			}
 			response = requests.post('https://api.resy.com/3/book', headers=headers, data=data)
+			return response 

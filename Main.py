@@ -6,13 +6,15 @@ import ResyParams
 class Main:
 
     def main(self):
+        restaurant_name = input("Restaurant name: ") 
+        res_date = input("Reservation date [YYYY-MM-DD]: ")
         headers = {	 
 	'authorization': 'ResyAPI api_key="VbWk7s3L4KiK5fzlO7JD3Q5EYolJI7n5"',
 	'accept-encoding': 'gzip, deflate, br',
 	'access-control-request-headers': 'authorization,cache-control,x-origin,x-resy-auth-token,x-resy-universal-auth',
     }
         session = LoginSession.LoginSession()
-        resyParams = ResyParams.ResyParams()
+        resyParams = ResyParams.ResyParams(restaurant_name, res_date)
         reservation = Reservation.Reservation(resyParams)
 
         # retrieve and set auth token and payment method by logging in
@@ -22,7 +24,7 @@ class Main:
             if datetime.now() >= resyParams.WHEN_TO_RESERVE:
                 print("reserving...")
                 table = reservation.get_best_table(reservation.resyParams.TIME, headers)
-                reservation.make_reservation(table, headers) 
+                print(reservation.make_reservation(table, headers))
                 return
 
 
